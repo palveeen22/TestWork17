@@ -56,10 +56,12 @@ export const apiClient = {
     return axiosInstance.get(url, config);
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async post<T>(url: string, data?: any, config?: RequestConfig): Promise<T> {
     return axiosInstance.post(url, data, config);
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async put<T>(url: string, data?: any, config?: RequestConfig): Promise<T> {
     return axiosInstance.put(url, data, config);
   },
