@@ -1,37 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Abelohost Shop
 
-## Getting Started
+A simple e-commerce web application built with Next.js and TypeScript.
 
-First, run the development server:
+## Features
 
+- User authentication with JWT
+- Product catalog display
+- Responsive design
+- Modern UI with SCSS
+
+## Tech Stack
+
+- **Next.js 14** - React framework
+- **TypeScript** - Type safety
+- **Zustand** - State management  
+- **SCSS Modules** - Styling
+- **Axios** - HTTP requests
+- **DummyJSON API** - Backend data
+
+## Installation
+
+1. **Clone the repository**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/palveeen22/TestWork17.git
+cd TestWork17
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Install dependencies**
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Run the application**
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **Open browser**
+Go to [http://localhost:3000](http://localhost:3000)
 
-## Learn More
+## Test Login
 
-To learn more about Next.js, take a look at the following resources:
+Use these credentials to test the app:
+- **Username:** `emilys`
+- **Password:** `emilyspass`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/              # Next.js pages
+├── components/       # React components  
+├── lib/             # API, stores, hooks, utils
+└── styles/          # Global styles
+```
 
-## Deploy on Vercel
+## Available Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run Next.js linting
+npm run lint:fix     # Fix ESLint errors automatically
+npm run lint:styles  # Run and fix Stylelint errors
+npm run type-check   # Check TypeScript types
+npm run format       # Format code with Prettier
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# TestWork17
+## License
+
+MIT License
