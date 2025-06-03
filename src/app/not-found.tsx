@@ -1,5 +1,23 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
+import { Metadata } from 'next';
+import { getUrl } from '@/libs/utils/urls';
+import { getHeaders } from '@/libs/utils/headers';
+import { getMetadata } from '@/libs/utils/metadata';
+
+export const generateMetadata = async (): Promise<Metadata> => {
+  const title = "Page Not Found";
+  const description = " The page you're looking for doesn't exist.";
+  const url = getUrl({ path: (await getHeaders()).path });
+
+  return await getMetadata({
+    title,
+    description,
+    openGraphArticle: {
+      ogUrl: url
+    },
+  });
+};
 
 export default function NotFound() {
   return (
