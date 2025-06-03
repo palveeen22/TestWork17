@@ -1,0 +1,25 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.container {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.spinner {
+  @include loading-spinner;
+
+  &.sm {
+    @include loading-spinner(16px);
+  }
+
+  &.lg {
+    @include loading-spinner(32px);
+  }
+}
+
+.text {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}

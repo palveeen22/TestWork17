@@ -1,0 +1,97 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.header {
+  background-color: $secondary-color;
+  color: $white;
+  padding: $spacing-md 0;
+  box-shadow: $shadow-md;
+}
+
+.container {
+  @include container;
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+
+  @include respond-to(md) {
+    flex-wrap: nowrap;
+  }
+}
+
+.info {
+  display: flex;
+  gap: $spacing-md;
+  font-size: $font-size-sm;
+  flex-wrap: wrap;
+
+  @include respond-to(sm) {
+    gap: $spacing-lg;
+  }
+}
+
+.infoItem {
+  @include flex-center;
+  gap: $spacing-xs;
+  white-space: nowrap;
+}
+
+.logo {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  text-decoration: none;
+  color: inherit;
+  
+  .accent {
+    color: $primary-color;
+  }
+}
+
+.auth {
+  @include flex-center;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+}
+
+.userInfo {
+  font-size: $font-size-sm;
+  color: rgba($white, 0.9);
+  white-space: nowrap;
+}
+
+// Responsive adjustments
+@include respond-to(md) {
+  .container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .info {
+    order: 1;
+  }
+  
+  .logo {
+    order: 2;
+  }
+  
+  .auth {
+    order: 3;
+  }
+}
+
+@media (max-width: 767px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .info {
+    justify-content: center;
+  }
+  
+  .auth {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+}

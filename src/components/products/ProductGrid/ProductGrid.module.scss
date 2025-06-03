@@ -1,0 +1,33 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.grid {
+  @include grid-responsive(280px, $spacing-lg);
+  margin-bottom: $spacing-2xl;
+
+  @include respond-to(sm) {
+    gap: $spacing-xl;
+  }
+}
+
+.loadingContainer {
+  @include flex-center;
+  min-height: 300px;
+}
+
+.errorContainer {
+  text-align: center;
+  padding: $spacing-2xl;
+}
+
+.retryButton {
+  @include button-primary;
+  margin-top: $spacing-md;
+}
+
+.emptyContainer {
+  @include flex-center;
+  min-height: 300px;
+  color: $text-secondary;
+  font-size: $font-size-lg;
+}
