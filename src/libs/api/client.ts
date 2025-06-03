@@ -47,6 +47,7 @@ const setupInterceptors = (instance: AxiosInstance): void => {
 };
 
 // Create configured axios instance
+// should be using in env for secreat data, but i better using it immediately for this proji ))
 const axiosInstance = createAxiosInstance('https://dummyjson.com');
 setupInterceptors(axiosInstance);
 
