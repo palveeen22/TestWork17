@@ -1,0 +1,25 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.inputGroup {
+  margin-bottom: $spacing-lg;
+}
+
+.label {
+  display: block;
+  margin-bottom: $spacing-sm;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+  font-size: $font-size-sm;
+}
+
+.input {
+  @include input-base;
+}
+
+.errorMessage {
+  display: block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-xs;
+  color: $error-color;
+}

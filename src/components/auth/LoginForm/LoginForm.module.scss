@@ -1,0 +1,67 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.loginForm {
+  max-width: 400px;
+  margin: $spacing-3xl auto;
+  padding: $spacing-2xl;
+  background: $white;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: $spacing-2xl;
+  color: $secondary-color;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+}
+
+.form {
+  margin-bottom: $spacing-xl;
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: $spacing-md;
+}
+
+.testCredentials {
+  padding: $spacing-md;
+  background-color: #f8f9fa;
+  border-radius: $radius-sm;
+  border-left: 4px solid $primary-color;
+  
+  .credentialsTitle {
+    font-weight: $font-weight-semibold;
+    margin-bottom: $spacing-sm;
+    color: $text-primary;
+  }
+  
+  p {
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-xs;
+    color: $text-secondary;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  code {
+    background-color: $white;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-family: monospace;
+    color: $primary-color;
+    font-weight: $font-weight-medium;
+  }
+}
+
+@media (max-width: 767px) {
+  .loginForm {
+    margin: $spacing-xl auto;
+    padding: $spacing-lg;
+  }
+}
