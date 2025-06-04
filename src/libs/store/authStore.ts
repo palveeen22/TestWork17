@@ -7,6 +7,7 @@ interface AuthActions {
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
   setUser: (user: User, token: string) => void;
+  updateTokens: (tokens: { accessToken: string; refreshToken: string }) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
@@ -16,10 +17,11 @@ type AuthStore = AuthState & AuthActions;
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // Initial state
       user: null,
       token: null,
+      refreshToken: null,
       isAuthenticated: false,
       isLoading: false,
       error: null,
@@ -33,7 +35,8 @@ export const useAuthStore = create<AuthStore>()(
           
           set({
             user: response,
-            token: response.token,
+            token: response.accessToken || response.token,
+            refreshToken: response.refreshToken,
             isAuthenticated: true,
             isLoading: false,
             error: null
@@ -42,6 +45,7 @@ export const useAuthStore = create<AuthStore>()(
           set({
             user: null,
             token: null,
+            refreshToken: null,
             isAuthenticated: false,
             isLoading: false,
             error: error instanceof Error ? error.message : 'Login failed'
@@ -54,6 +58,7 @@ export const useAuthStore = create<AuthStore>()(
         set({
           user: null,
           token: null,
+          refreshToken: null,
           isAuthenticated: false,
           isLoading: false,
           error: null
@@ -65,6 +70,14 @@ export const useAuthStore = create<AuthStore>()(
           user,
           token,
           isAuthenticated: true,
+          error: null
+        });
+      },
+
+      updateTokens: (tokens: { accessToken: string; refreshToken: string }) => {
+        set({
+          token: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
           error: null
         });
       },
@@ -86,8 +99,25 @@ export const useAuthStore = create<AuthStore>()(
       partialize: (state) => ({
         user: state.user,
         token: state.token,
+        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated
       })
     }
   )
 );
+
+// Setup event listeners for token refresh
+if (typeof window !== 'undefined') {
+  // Listen for token refresh events
+  window.addEventListener('tokenRefreshed', (event: Event) => {
+    const customEvent = event as CustomEvent;
+    const { updateTokens } = useAuthStore.getState();
+    updateTokens(customEvent.detail);
+  });
+
+  // Listen for token expiration events
+  window.addEventListener('authTokenExpired', () => {
+    const { logout } = useAuthStore.getState();
+    logout();
+  });
+}
