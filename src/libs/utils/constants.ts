@@ -42,12 +42,12 @@ export const TEST_CREDENTIALS = {
 
 export const navigationItems = [
   { href: '/', label: 'Home' },
-  { href: '/', label: 'Hot Deals' },
-  { href: '/', label: 'Categories' },
-  { href: '/', label: 'Laptops' },
-  { href: '/', label: 'Smartphones' },
-  { href: '/', label: 'Cameras' },
-  { href: '/', label: 'Accessories' },
+  { href: '/hot-deals', label: 'Hot Deals' },
+  { href: '/categories', label: 'Categories' },
+  { href: '/laptops', label: 'Laptops' },
+  { href: '/smartphones', label: 'Smartphones' },
+  { href: '/cameras', label: 'Cameras' },
+  { href: '/accessories', label: 'Accessories' },
 ];
 
 export const MetaTitle = 'Abelohost Shop' as const;
