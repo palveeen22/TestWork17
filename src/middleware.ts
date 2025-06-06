@@ -5,23 +5,12 @@ import { readPayloadJose } from "./libs/utils/jwt";
 
 
 export const middleware = async (request: NextRequest) => {
-
-	if (
-		!request.url.includes("/api") &&
-		!request.url.includes("_next/static") &&
-		!request.url.includes("_next/image") &&
-		!request.url.includes("favicon.ico")
-	) {
-		console.log(request.method, request.url);
-	}
-
+	
 	if (request.url.includes("/api")) {
-		console.log("API", request.method, request.url);
 
 		const cookieStorage = await cookies();
 		const token = cookieStorage.get("token");
 
-		console.log("token dari cookieStorage", token);
 
 		if (!token) {
 			return NextResponse.json({
