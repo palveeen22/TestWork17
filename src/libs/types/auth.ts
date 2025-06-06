@@ -4,8 +4,8 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  gender: string;
-  image: string;
+  gender?: string;
+  image?: string;
 }
 
 export interface AuthResponse {
@@ -27,10 +27,7 @@ export interface LoginCredentials {
 }
 
 export interface AuthState {
-  user: User | null;
-  token: string | null;
-  refreshToken: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
+  success: boolean;
+  error?: string;
+  user?: User | null;
 }

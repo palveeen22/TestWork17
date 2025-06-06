@@ -1,121 +1,177 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { AuthState, User, LoginCredentials } from '../types';
-import { loginUser } from '../api/auth';
+import type { User, LoginCredentials } from '../types';
+import { getSessionAction, loginAction, logoutAction, refreshTokenAction } from '../actions/authAction';
 
 interface AuthActions {
   login: (credentials: LoginCredentials) => Promise<void>;
-  logout: () => void;
-  setUser: (user: User, token: string) => void;
-  updateTokens: (tokens: { accessToken: string; refreshToken: string }) => void;
+  logout: () => Promise<void>;
+  checkSession: () => Promise<void>;
+  setUser: (user: User) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
 }
 
-type AuthStore = AuthState & AuthActions;
+interface AuthStateSimplified {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
 
-export const useAuthStore = create<AuthStore>()(
-  persist(
-    (set, get) => ({
-      // Initial state
-      user: null,
-      token: null,
-      refreshToken: null,
-      isAuthenticated: false,
-      isLoading: false,
-      error: null,
+type AuthStore = AuthStateSimplified & AuthActions;
 
-      // Actions
-      login: async (credentials: LoginCredentials) => {
-        try {
-          set({ isLoading: true, error: null });
-          
-          const response = await loginUser(credentials);
-          
-          set({
-            user: response,
-            token: response.accessToken || response.token,
-            refreshToken: response.refreshToken,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null
-          });
-        } catch (error) {
-          set({
-            user: null,
-            token: null,
-            refreshToken: null,
-            isAuthenticated: false,
-            isLoading: false,
-            error: error instanceof Error ? error.message : 'Login failed'
-          });
-          throw error;
-        }
-      },
+export const useAuthStore = create<AuthStore>((set, get) => ({
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
 
-      logout: () => {
+  // Actions
+  login: async (credentials: LoginCredentials) => {
+    try {
+      set({ isLoading: true, error: null });
+
+      const result = await loginAction(credentials);
+
+      if (result.success && result.user) {
+        set({
+          user: result.user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null
+        });
+      } else {
+        throw new Error(result.error || 'Login failed');
+      }
+    } catch (error) {
+      set({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Login failed'
+      });
+      throw error;
+    }
+  },
+
+  logout: async () => {
+    try {
+      set({ isLoading: true });
+
+      const result = await logoutAction();
+
+      if (result.success) {
         set({
           user: null,
-          token: null,
-          refreshToken: null,
           isAuthenticated: false,
           isLoading: false,
           error: null
         });
-      },
-
-      setUser: (user: User, token: string) => {
-        set({
-          user,
-          token,
-          isAuthenticated: true,
-          error: null
-        });
-      },
-
-      updateTokens: (tokens: { accessToken: string; refreshToken: string }) => {
-        set({
-          token: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          error: null
-        });
-      },
-
-      setLoading: (loading: boolean) => {
-        set({ isLoading: loading });
-      },
-
-      setError: (error: string | null) => {
-        set({ error, isLoading: false });
-      },
-
-      clearError: () => {
-        set({ error: null });
+      } else {
+        throw new Error(result.error || 'Logout failed');
       }
-    }),
-    {
-      name: 'auth-storage',
-      partialize: (state) => ({
-        user: state.user,
-        token: state.token,
-        refreshToken: state.refreshToken,
-        isAuthenticated: state.isAuthenticated
-      })
+    } catch (error) {
+      set({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null
+      });
+      console.error('Logout error:', error);
     }
-  )
-);
+  },
 
-// Setup event listeners for token refresh
+  checkSession: async () => {
+    const { isLoading, isAuthenticated } = get();
+    if (isLoading) {
+      console.log('🛑 checkSession already running, skipping...');
+      return;
+    }
+
+    if (isAuthenticated) {
+      console.log('✅ Already authenticated, skipping...');
+      return;
+    }
+
+    try {
+      console.log('🔍 Checking session...');
+      set({ isLoading: true });
+      const session = await getSessionAction();
+
+      if (session.isAuthenticated && session.user) {
+        console.log('✅ Session valid:', session.user.username);
+        set({
+          user: session.user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null
+        });
+      } else {
+        console.log('❌ No valid session');
+        set({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+          error: null
+        });
+      }
+    } catch (error) {
+      console.log('💥 Session check error:', error);
+      set({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null
+      });
+    }
+  },
+
+  // !!! HERE'S WHERE YOU USE refreshTokenAction, added correctly
+  refreshTokens: async () => {
+    try {
+      await refreshTokenAction();
+
+      // Refresh the session after token refresh
+      await get().checkSession();
+
+      return true;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+
+      // Force logout on refresh failure
+      set({
+        user: null,
+        isAuthenticated: false,
+        error: 'Session expired. Please login again.',
+      });
+
+      return false;
+    }
+  },
+
+  setUser: (user: User) => {
+    set({
+      user,
+      isAuthenticated: true,
+      error: null
+    });
+  },
+
+  setLoading: (loading: boolean) => {
+    set({ isLoading: loading });
+  },
+
+  setError: (error: string | null) => {
+    set({ error, isLoading: false });
+  },
+
+  clearError: () => {
+    set({ error: null });
+  }
+}));
+
 if (typeof window !== 'undefined') {
-  // Listen for token refresh events
-  window.addEventListener('tokenRefreshed', (event: Event) => {
-    const customEvent = event as CustomEvent;
-    const { updateTokens } = useAuthStore.getState();
-    updateTokens(customEvent.detail);
-  });
-
-  // Listen for token expiration events
   window.addEventListener('authTokenExpired', () => {
     const { logout } = useAuthStore.getState();
     logout();

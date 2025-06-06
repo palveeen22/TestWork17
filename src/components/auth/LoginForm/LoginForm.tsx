@@ -1,16 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
 import { Input } from '@/components/ui/Input/Input';
 import { Alert } from '@/components/ui/Alert/Alert';
-import styles from './LoginForm.module.scss';
-import { useAuth } from '@/libs/hooks';
-import { LoginCredentials } from '@/libs/types';
 import { validatePassword, validateUsername } from '@/libs/utils';
+import type { LoginCredentials } from '@/libs/types';
+import styles from './LoginForm.module.scss';
+import { loginAction } from '@/libs/actions/authAction';
 
 export const LoginForm = () => {
-  const { login, isLoading, error, clearError } = useAuth();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<LoginCredentials>({
     username: '',
@@ -50,7 +53,7 @@ export const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    clearError();
+    setError(null);
 
     // Validate all fields
     const usernameValid = validateField('username', formData.username);
@@ -62,12 +65,21 @@ export const LoginForm = () => {
       return;
     }
 
-    try {
-      await login(formData);
-    } catch (err) {
-      // Error is handled by the auth store
-      console.log(err);
-    }
+    startTransition(async () => {
+      try {
+        const result = await loginAction(formData);
+        
+        if (result.success) {
+          router.push('/');
+          router.refresh();
+        } else {
+          setError(result.error || 'Login failed');
+        }
+      } catch (err) {
+        setError('Something went wrong. Please try again.');
+        console.error('Login error:', err);
+      }
+    });
   };
 
   return (
@@ -78,7 +90,7 @@ export const LoginForm = () => {
         <Alert
           type="error"
           message={error}
-          onClose={clearError}
+          onClose={() => setError(null)}
         />
       )}
 
@@ -94,6 +106,7 @@ export const LoginForm = () => {
           touched={touched.username}
           placeholder="Enter username"
           autoComplete="username"
+          disabled={isPending}
         />
 
         <Input
@@ -107,12 +120,14 @@ export const LoginForm = () => {
           touched={touched.password}
           placeholder="Enter password"
           autoComplete="current-password"
+          disabled={isPending}
         />
 
         <Button
           type="submit"
-          isLoading={isLoading}
+          isLoading={isPending}
           className={styles.submitButton}
+          disabled={isPending}
         >
           Login
         </Button>

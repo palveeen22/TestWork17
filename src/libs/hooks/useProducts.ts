@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useProductsStore } from '../store';
 
 export const useProducts = (autoFetch = true, limit = 12) => {
@@ -12,13 +12,20 @@ export const useProducts = (autoFetch = true, limit = 12) => {
     clearError
   } = useProductsStore();
 
+  const hasFetched = useRef(false);
+
   useEffect(() => {
-    if (autoFetch && products.length === 0 && !isLoading) {
+    if (autoFetch && products.length === 0 && !isLoading && !hasFetched.current) {
+      console.log('🔍 useProducts: Fetching products...');
+      hasFetched.current = true;
       fetchProducts(limit);
     }
-  }, [autoFetch, products.length, isLoading, fetchProducts, limit]);
+  }, [autoFetch, products.length, isLoading, limit]);
 
-  const refetch = () => fetchProducts(limit);
+  const refetch = () => {
+    hasFetched.current = false;
+    fetchProducts(limit);
+  };
 
   return {
     products,
