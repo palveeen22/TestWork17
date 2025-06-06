@@ -85,22 +85,19 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   checkSession: async () => {
     const { isLoading, isAuthenticated } = get();
     if (isLoading) {
-      console.log('🛑 checkSession already running, skipping...');
+      ('🛑 checkSession already running, skipping...');
       return;
     }
 
     if (isAuthenticated) {
-      console.log('✅ Already authenticated, skipping...');
       return;
     }
 
     try {
-      console.log('🔍 Checking session...');
       set({ isLoading: true });
       const session = await getSessionAction();
 
       if (session.isAuthenticated && session.user) {
-        console.log('✅ Session valid:', session.user.username);
         set({
           user: session.user,
           isAuthenticated: true,
@@ -108,7 +105,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           error: null
         });
       } else {
-        console.log('❌ No valid session');
         set({
           user: null,
           isAuthenticated: false,
@@ -117,7 +113,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         });
       }
     } catch (error) {
-      console.log('💥 Session check error:', error);
       set({
         user: null,
         isAuthenticated: false,

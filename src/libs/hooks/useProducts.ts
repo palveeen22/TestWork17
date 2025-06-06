@@ -16,7 +16,6 @@ export const useProducts = (autoFetch = true, limit = 12) => {
 
   useEffect(() => {
     if (autoFetch && products.length === 0 && !isLoading && !hasFetched.current) {
-      console.log('🔍 useProducts: Fetching products...');
       hasFetched.current = true;
       fetchProducts(limit);
     }
