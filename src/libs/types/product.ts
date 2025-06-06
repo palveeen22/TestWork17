@@ -19,8 +19,15 @@ export interface ProductsResponse {
   limit: number;
 }
 
+export interface IProductsActionResponse {
+  success: boolean;
+  error?: string;
+  data?: ProductsResponse;
+}
+
 export interface ProductsState {
   products: Product[];
   isLoading: boolean;
+  isInitializing: boolean;
   error: string | null;
 }

@@ -4,8 +4,10 @@ import React from 'react';
 import { ProductGrid } from '../ProductGrid/ProductGrid';
 import styles from './ProductsSection.module.scss';
 import { useProducts } from '@/libs/hooks';
+import { useProductsStore } from '@/libs/store';
 
 export const ProductsSection = () => {
+  const { isInitializing } = useProductsStore();
   const { products, isLoading, error, refetch } = useProducts();
 
   return (
@@ -16,6 +18,7 @@ export const ProductsSection = () => {
           products={products}
           isLoading={isLoading}
           error={error}
+          isInitializing={isInitializing}
           onRetry={refetch}
         />
       </div>

@@ -10,6 +10,7 @@ import { Product } from '@/libs/types';
 interface ProductGridProps {
   products: Product[];
   isLoading: boolean;
+  isInitializing?: boolean;
   error: string | null;
   onRetry?: () => void;
 }
@@ -17,10 +18,11 @@ interface ProductGridProps {
 export const ProductGrid = ({
   products,
   isLoading,
+  isInitializing = false,
   error,
   onRetry
 }: ProductGridProps) => {
-  if (isLoading) {
+  if (isLoading || isInitializing) {
     return (
       <div className={styles.loadingContainer}>
         <LoadingSpinner size="lg" text="Loading products..." />
@@ -45,7 +47,7 @@ export const ProductGrid = ({
     );
   }
 
-  if (products.length === 0) {
+  if (products.length === 0 && !isInitializing && !isLoading) {
     return (
       <div className={styles.emptyContainer}>
         <p>No products found.</p>

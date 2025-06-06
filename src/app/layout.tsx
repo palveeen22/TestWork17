@@ -1,5 +1,4 @@
 import { Inter } from 'next/font/google';
-// import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import './globals.scss';
 import type { Metadata } from 'next';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
