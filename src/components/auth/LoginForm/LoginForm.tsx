@@ -73,7 +73,7 @@ export const LoginForm = () => {
           router.push('/');
           router.refresh();
         } else {
-          setError(result.error || 'Login failed');
+          setError('username or password incorrect');
         }
       } catch (err) {
         setError('Something went wrong. Please try again.');
